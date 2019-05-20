@@ -16,6 +16,21 @@ defmodule BookingSlotTest do
     assert Enum.count(day_slots) == 17
   end
 
+  test "#day_slots_from_times with array" do
+    assert BookingSlot.day_slots_from_times([{"9:00am", "9:30am"}, {"1:00pm", "2:30pm"}]) ==
+      {:ok,
+        [
+          %BookingSlot.DaySlot{id: 36},
+          %BookingSlot.DaySlot{id: 37},
+          %BookingSlot.DaySlot{id: 52},
+          %BookingSlot.DaySlot{id: 53},
+          %BookingSlot.DaySlot{id: 54},
+          %BookingSlot.DaySlot{id: 55},
+          %BookingSlot.DaySlot{id: 56},
+          %BookingSlot.DaySlot{id: 57}
+        ]}
+  end
+
   test "#consolidate_slots" do
     consolidated_slots =
       [%DaySlot{id: 36}, %DaySlot{id: 37}, %DaySlot{id: 38}, %DaySlot{id: 40}, %DaySlot{id: 42}, %DaySlot{id: 43}]
