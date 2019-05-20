@@ -23,6 +23,40 @@ defmodule BookingSlotTest do
     assert Enum.count(day_slots) == 17
   end
 
+  test "#matched_slots" do
+    day_slots = [
+      %BookingSlot.DaySlot{id: 25},
+      %BookingSlot.DaySlot{id: 36},
+      %BookingSlot.DaySlot{id: 37},
+      %BookingSlot.DaySlot{id: 52},
+      %BookingSlot.DaySlot{id: 53},
+      %BookingSlot.DaySlot{id: 54},
+      %BookingSlot.DaySlot{id: 60},
+      %BookingSlot.DaySlot{id: 61},
+      %BookingSlot.DaySlot{id: 62},
+      %BookingSlot.DaySlot{id: 63}
+    ]
+
+    assert BookingSlot.matched_slots(day_slots, 3) == [
+      %BookingSlot.DaySlot{id: 52},
+      %BookingSlot.DaySlot{id: 53},
+      %BookingSlot.DaySlot{id: 54},
+      %BookingSlot.DaySlot{id: 60},
+      %BookingSlot.DaySlot{id: 61},
+      %BookingSlot.DaySlot{id: 62},
+      %BookingSlot.DaySlot{id: 63}
+    ]
+
+    assert BookingSlot.matched_slots(day_slots, 4) == [
+      %BookingSlot.DaySlot{id: 60},
+      %BookingSlot.DaySlot{id: 61},
+      %BookingSlot.DaySlot{id: 62},
+      %BookingSlot.DaySlot{id: 63}
+    ]
+
+    assert BookingSlot.matched_slots(day_slots, 5) == []
+  end
+
   test "#day_slots_from_times with array" do
     assert BookingSlot.day_slots_from_times([{"9:00am", "9:30am"}, {"1:00pm", "2:30pm"}]) ==
       {:ok,

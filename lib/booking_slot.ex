@@ -4,6 +4,13 @@ defmodule BookingSlot do
   """
   alias __MODULE__.{DaySlot,ConsolidatedSlot,Result}
 
+  def matched_slots(day_slots, length) do
+    day_slots
+    |> consolidate_slots()
+    |> Enum.filter(& &1.length >= length)
+    |> unconsolidate_slots()
+  end
+
   def consolidate_slots(slots) do
     consolidate_slots([], slots)
   end
