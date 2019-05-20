@@ -2,7 +2,7 @@ defmodule BookingSlot do
   @moduledoc """
   Documentation for BookingSlot.
   """
-  alias __MODULE__.{Time,DaySlot,ConsolidatedSlot,Result}
+  alias __MODULE__.{DaySlot,ConsolidatedSlot,Result}
 
   def consolidate_slots(slots) do
     consolidate_slots([], slots)
@@ -27,7 +27,7 @@ defmodule BookingSlot do
 
   def unconsolidate_slot(%ConsolidatedSlot{id: starting_id, length: length}) do
     0..length - 1
-    |> Enum.map(& %DaySlot{id: starting_id + &1})
+    |> Enum.map(& DaySlot.new(starting_id + &1))
   end
 
   def day_slots_from_times({start_time_str, end_time_str}) do
@@ -35,7 +35,7 @@ defmodule BookingSlot do
          {:ok, %DaySlot{id: end_day_slot_num}} <- day_slot_from_time(end_time_str) do
       {:ok,
         start_day_slot_num .. end_day_slot_num - 1
-        |> Enum.map(& %DaySlot{id: &1}) }
+        |> Enum.map(& DaySlot.new(&1)) }
     end
   end
 
@@ -45,19 +45,8 @@ defmodule BookingSlot do
     |> Result.choose()
   end
 
-  def day_slot_from_time(%Time{} = time) do
-    slot_num =
-      time
-      |> get_total_minutes()
-      |> to_slot_num()
-
-    {:ok, %DaySlot{id: slot_num}}
-  end
-
-  def day_slot_from_time(time_str) when is_binary(time_str) do
-    with {:ok, time} <- parse_time(time_str) do
-      day_slot_from_time(time)
-    end
+  def day_slot_from_time(time) do
+    DaySlot.from_time(time)
   end
 
   defp do_consolidate_slots(%ConsolidatedSlot{} = consolidated_slot, []) do
@@ -71,31 +60,5 @@ defmodule BookingSlot do
     else
       {consolidated_slot, prev_rest}
     end
-  end
-
-  defp parse_time(time) do
-    case Regex.run(~r/(1[0-2]|0?[1-9]):([0-5][0-9]) ?([AaPp][Mm])/, time) do
-      [_, hr_str, min_str, suffix] ->
-        time = to_time(hr_str, min_str, suffix)
-        {:ok, time}
-      _ ->
-        {:error, "invalid_format"}
-    end
-  end
-
-  defp to_slot_num(minutes) do
-    Kernel.round(Float.floor(minutes / 15))
-  end
-
-  defp get_total_minutes(%Time{hour: hour, minute: minute}) do
-    hour * 60 + minute
-  end
-
-  defp to_time(hr, min, "am") do
-    %Time{hour: String.to_integer(hr), minute: String.to_integer(min)}
-  end
-
-  defp to_time(hr, min, "pm") do
-    %Time{hour: String.to_integer(hr) + 12, minute: String.to_integer(min)}
   end
 end
