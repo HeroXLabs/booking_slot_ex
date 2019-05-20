@@ -1,13 +1,20 @@
 defmodule BookingSlotTest do
   use ExUnit.Case
   doctest BookingSlot
-  alias BookingSlot.{DaySlot,ConsolidatedSlot}
+  alias BookingSlot.{DaySlot,ConsolidatedSlot,Time}
 
   test "#day_slot_from_time" do
     assert BookingSlot.day_slot_from_time("9:00am") == {:ok, %DaySlot{id: 36}}
     assert BookingSlot.day_slot_from_time("9:15am") == {:ok, %DaySlot{id: 37}}
     assert BookingSlot.day_slot_from_time("9:29am") == {:ok, %DaySlot{id: 37}}
     assert BookingSlot.day_slot_from_time("9:30am") == {:ok, %DaySlot{id: 38}}
+  end
+
+  test "#day_slot_from_time with Time input" do
+    assert BookingSlot.day_slot_from_time(%Time{hour: 9, minute: 0}) == {:ok, %DaySlot{id: 36}}
+    assert BookingSlot.day_slot_from_time(%Time{hour: 9, minute: 15}) == {:ok, %DaySlot{id: 37}}
+    assert BookingSlot.day_slot_from_time(%Time{hour: 9, minute: 29}) == {:ok, %DaySlot{id: 37}}
+    assert BookingSlot.day_slot_from_time(%Time{hour: 9, minute: 30}) == {:ok, %DaySlot{id: 38}}
   end
 
   test "#day_slots_from_times" do

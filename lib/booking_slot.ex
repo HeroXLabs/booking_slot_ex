@@ -45,14 +45,18 @@ defmodule BookingSlot do
     |> Result.choose()
   end
 
+  def day_slot_from_time(%Time{} = time) do
+    slot_num =
+      time
+      |> get_total_minutes()
+      |> to_slot_num()
+
+    {:ok, %DaySlot{id: slot_num}}
+  end
+
   def day_slot_from_time(time_str) when is_binary(time_str) do
     with {:ok, time} <- parse_time(time_str) do
-      slot_num =
-        time
-        |> get_total_minutes()
-        |> to_slot_num()
-
-      {:ok, %DaySlot{id: slot_num}}
+      day_slot_from_time(time)
     end
   end
 
