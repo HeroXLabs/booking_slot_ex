@@ -110,6 +110,15 @@ defmodule BookingSlotTest do
           %BookingSlot.DaySlot{id: 56},
           %BookingSlot.DaySlot{id: 57}
         ]}
+
+    assert BookingSlot.day_slots_from_times([{"11:00am", "12:00pm"}]) ==
+      {:ok,
+        [
+          %BookingSlot.DaySlot{id: 44},
+          %BookingSlot.DaySlot{id: 45},
+          %BookingSlot.DaySlot{id: 46},
+          %BookingSlot.DaySlot{id: 47}
+        ]}
   end
 
   test "#consolidate_slots" do

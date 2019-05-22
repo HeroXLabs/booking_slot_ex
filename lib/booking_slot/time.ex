@@ -9,6 +9,10 @@ defmodule BookingSlot.Time do
     %__MODULE__{hour: hr, minute: min}
   end
 
+  defp build(12, min, "pm") do
+    %__MODULE__{hour: 12, minute: min}
+  end
+
   defp build(hr, min, "pm") do
     %__MODULE__{hour: hr + 12, minute: min}
   end
