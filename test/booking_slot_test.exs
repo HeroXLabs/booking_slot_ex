@@ -3,6 +3,13 @@ defmodule BookingSlotTest do
   doctest BookingSlot
   alias BookingSlot.{DaySlot,ConsolidatedSlot,Time}
 
+  test "#to_time_str" do
+    assert BookingSlot.to_time_str(%DaySlot{id: 36}) == "9:00am"
+    assert BookingSlot.to_time_str(%DaySlot{id: 37}) == "9:15am"
+    assert BookingSlot.to_time_str(%DaySlot{id: 37}) == "9:15am"
+    assert BookingSlot.to_time_str(%DaySlot{id: 38}) == "9:30am"
+  end
+
   test "#day_slot_from_time" do
     assert BookingSlot.day_slot_from_time("9:00am") == {:ok, %DaySlot{id: 36}}
     assert BookingSlot.day_slot_from_time("9:15am") == {:ok, %DaySlot{id: 37}}

@@ -4,6 +4,10 @@ defmodule BookingSlot do
   """
   alias __MODULE__.{DaySlot,ConsolidatedSlot,Result}
 
+  def to_time_str(day_slot) do
+    DaySlot.to_time_str(day_slot)
+  end
+
   def union(day_slots_1, day_slots_2) do
     day_slots_1 ++ day_slots_2
     |> Enum.uniq_by(&(&1.id))

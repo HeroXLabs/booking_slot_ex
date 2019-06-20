@@ -24,8 +24,29 @@ defmodule BookingSlot.DaySlot do
     end
   end
 
+  def to_time_str(%__MODULE__{id: day_slot_num}, min_per_slot \\ 15) do
+    total_min = day_slot_num * min_per_slot
+    hour_digit = round_floor(total_min, 60)
+    minute_digit = rem(total_min, 60)
+
+    suffix =
+      case round_floor(hour_digit, 12) do
+        0 -> "am"
+        1 -> "pm"
+      end
+
+    minute = String.pad_leading(to_string(minute_digit), 2, "0")
+    hour = to_string(rem(hour_digit, 12))
+    num_part = Enum.join([hour, minute], ":")
+    Enum.join([num_part, suffix])
+  end
+
   defp to_slot_num(minutes, min_per_slot) do
-    Kernel.round(Float.floor(minutes / min_per_slot))
+    round_floor(minutes, min_per_slot)
+  end
+
+  defp round_floor(a, b) do
+    round(Float.floor(a / b))
   end
 
   defp get_total_minutes(%Time{hour: hour, minute: minute}) do
