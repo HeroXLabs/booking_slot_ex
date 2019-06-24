@@ -1,6 +1,10 @@
 defmodule BookingSlot.Time do
   defstruct [:hour, :minute]
 
+  def from_time(%Time{} = time) do
+    %__MODULE__{hour: time.hour, minute: time.minute}
+  end
+
   def new(time_str) do
     parse_time(time_str)
   end

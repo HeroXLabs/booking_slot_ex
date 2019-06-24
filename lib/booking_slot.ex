@@ -2,7 +2,19 @@ defmodule BookingSlot do
   @moduledoc """
   Documentation for BookingSlot.
   """
-  alias __MODULE__.{DaySlot,ConsolidatedSlot,Result}
+  alias __MODULE__.{DaySlot,ConsolidatedSlot,Result,Time}
+  import Calendar.DateTime, only: [shift_zone!: 2]
+
+  def day_slot_from_datetime(datetime_utc, timezone) do
+    time =
+      datetime_utc
+      |> shift_zone!(timezone)
+      |> DateTime.to_time()
+
+    time
+    |> Time.from_time()
+    |> day_slot_from_time()
+  end
 
   def to_time_str(day_slot) do
     DaySlot.to_time_str(day_slot)
