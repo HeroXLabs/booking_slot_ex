@@ -36,10 +36,13 @@ defmodule BookingSlot.DaySlot do
       end
 
     minute = String.pad_leading(to_string(minute_digit), 2, "0")
-    hour = to_string(rem(hour_digit, 12))
+    hour = to_string(normalize_hour_digit(hour_digit))
     num_part = Enum.join([hour, minute], ":")
     Enum.join([num_part, suffix])
   end
+
+  defp normalize_hour_digit(12), do: 12
+  defp normalize_hour_digit(n), do: rem(n, 12)
 
   defp to_slot_num(minutes, min_per_slot) do
     round_floor(minutes, min_per_slot)
