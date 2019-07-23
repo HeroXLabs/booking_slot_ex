@@ -37,7 +37,12 @@ defmodule BookingSlot do
     day_slots
     |> consolidate_slots()
     |> Enum.filter(& &1.length >= length)
+    |> Enum.map(& remove_tail_slots(&1, length))
     |> unconsolidate_slots()
+  end
+
+  defp remove_tail_slots(%ConsolidatedSlot{length: slot_length} = consolidated_slot, length) do
+    %{ consolidated_slot | length: (slot_length - (length - 1)) }
   end
 
   def consolidate_slots(slots) do
