@@ -40,6 +40,8 @@ defmodule BookingSlotTest do
 
   test "#day_slots_from_times" do
     assert BookingSlot.day_slots_from_times({"12:00pm", "12:30pm"}) == {:ok, [%BookingSlot.DaySlot{id: 48}, %BookingSlot.DaySlot{id: 49}]}
+    assert BookingSlot.day_slots_from_times({"12:00pm", "12:15pm"}) == {:ok, [%BookingSlot.DaySlot{id: 48}]}
+    assert BookingSlot.day_slots_from_times({"12:00pm", "12:20pm"}) == {:ok, [%BookingSlot.DaySlot{id: 48}, %BookingSlot.DaySlot{id: 49}]}
     assert BookingSlot.day_slots_from_times({"9:00am", "9:30am"}) == {:ok, [%DaySlot{id: 36}, %DaySlot{id: 37}]}
     {:ok, day_slots} = BookingSlot.day_slots_from_times({"9:00am", "1:15pm"})
     assert Enum.count(day_slots) == 17

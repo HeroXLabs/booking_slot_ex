@@ -73,9 +73,9 @@ defmodule BookingSlot do
 
   def day_slots_from_times({start_time_str, end_time_str}) do
     with {:ok, %DaySlot{id: start_day_slot_num}} <- day_slot_from_time(start_time_str),
-         {:ok, %DaySlot{id: end_day_slot_num}} <- day_slot_from_time(end_time_str) do
+         {:ok, %DaySlot{id: end_day_slot_num}} <- day_slot_from_time(end_time_str, true) do
       {:ok,
-        start_day_slot_num .. end_day_slot_num - 1
+        start_day_slot_num .. end_day_slot_num-1
         |> Enum.map(& DaySlot.new(&1)) }
     end
   end
@@ -86,8 +86,12 @@ defmodule BookingSlot do
     |> Result.choose()
   end
 
-  def day_slot_from_time(time) do
-    DaySlot.from_time(time)
+  def day_slot_from_time(time_str, is_end \\ false) do
+    if is_end do
+      DaySlot.from_end_time(time_str)
+    else
+      DaySlot.from_time(time_str)
+    end
   end
 
   defp do_consolidate_slots(%ConsolidatedSlot{} = consolidated_slot, []) do
