@@ -67,6 +67,25 @@ defmodule BookingSlotTest do
     ]
   end
 
+  test "#intersect" do
+    result = BookingSlot.intersect([
+      %BookingSlot.DaySlot{id: 23},
+      %BookingSlot.DaySlot{id: 25},
+      %BookingSlot.DaySlot{id: 36},
+      %BookingSlot.DaySlot{id: 37},
+      %BookingSlot.DaySlot{id: 52}
+    ], [
+      %BookingSlot.DaySlot{id: 23},
+      %BookingSlot.DaySlot{id: 36},
+      %BookingSlot.DaySlot{id: 38}
+    ])
+
+    assert result == [
+      %BookingSlot.DaySlot{id: 23},
+      %BookingSlot.DaySlot{id: 36}
+    ]
+  end
+
   test "#subtract" do
     result = BookingSlot.subtract([
       %BookingSlot.DaySlot{id: 23},

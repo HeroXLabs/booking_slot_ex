@@ -26,6 +26,13 @@ defmodule BookingSlot do
     |> Enum.sort(&(&1.id < &2.id))
   end
 
+  def intersect(day_slots_1, day_slots_2) do
+    day_slots_1_ids = day_slots_1 |> Enum.map(& &1.id)
+    day_slots_2
+    |> Enum.filter(&Enum.member?(day_slots_1_ids, &1.id))
+    |> Enum.sort(&(&1.id < &2.id))
+  end
+
   def subtract(day_slots_1, day_slots_2) do
     day_slots_2_ids = day_slots_2 |> Enum.map(& &1.id)
     day_slots_1
