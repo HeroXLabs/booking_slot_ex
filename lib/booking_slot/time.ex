@@ -9,6 +9,10 @@ defmodule BookingSlot.Time do
     parse_time(time_str)
   end
 
+  defp build(12, min, "am") do
+    %__MODULE__{hour: 0, minute: min}
+  end
+
   defp build(hr, min, "am") do
     %__MODULE__{hour: hr, minute: min}
   end

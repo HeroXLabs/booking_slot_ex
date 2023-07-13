@@ -36,6 +36,8 @@ defmodule BookingSlotTest do
     assert BookingSlot.day_slot_from_time(%Time{hour: 9, minute: 15}) == {:ok, %DaySlot{id: 37}}
     assert BookingSlot.day_slot_from_time(%Time{hour: 9, minute: 29}) == {:ok, %DaySlot{id: 37}}
     assert BookingSlot.day_slot_from_time(%Time{hour: 9, minute: 30}) == {:ok, %DaySlot{id: 38}}
+    assert BookingSlot.day_slot_from_time(%Time{hour: 0, minute: 0}) == {:ok, %DaySlot{id: 0}}
+    assert BookingSlot.day_slot_from_time(%Time{hour: 0, minute: 15}) == {:ok, %DaySlot{id: 1}}
   end
 
   test "#day_slots_from_times" do
@@ -43,6 +45,17 @@ defmodule BookingSlotTest do
     assert BookingSlot.day_slots_from_times({"12:00pm", "12:15pm"}) == {:ok, [%BookingSlot.DaySlot{id: 48}]}
     assert BookingSlot.day_slots_from_times({"12:00pm", "12:20pm"}) == {:ok, [%BookingSlot.DaySlot{id: 48}, %BookingSlot.DaySlot{id: 49}]}
     assert BookingSlot.day_slots_from_times({"9:00am", "9:30am"}) == {:ok, [%DaySlot{id: 36}, %DaySlot{id: 37}]}
+    assert BookingSlot.day_slots_from_times({"12:00am", "12:45am"}) == {:ok, [%DaySlot{id: 0}, %DaySlot{id: 1}, %DaySlot{id: 2}]}
+    assert BookingSlot.day_slots_from_times({"10:00pm", "11:55pm"}) == {:ok, [
+      %DaySlot{id: 88}, 
+      %DaySlot{id: 89}, 
+      %DaySlot{id: 90},
+      %DaySlot{id: 91},
+      %DaySlot{id: 92},
+      %DaySlot{id: 93},
+      %DaySlot{id: 94},
+      %DaySlot{id: 95}
+    ]}
     {:ok, day_slots} = BookingSlot.day_slots_from_times({"9:00am", "1:15pm"})
     assert Enum.count(day_slots) == 17
   end
