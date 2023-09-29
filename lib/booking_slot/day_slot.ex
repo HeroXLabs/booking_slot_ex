@@ -38,7 +38,13 @@ defmodule BookingSlot.DaySlot do
     end
   end
 
-  def to_time_str(%__MODULE__{id: day_slot_num}, min_per_slot \\ 15) do
+  def to_time_str(_, min_per_slot \\ 15)
+
+  def to_time_str(%__MODULE__{id: 0}, _min_per_slot) do
+    "12:00am"
+  end
+
+  def to_time_str(%__MODULE__{id: day_slot_num}, min_per_slot) do
     total_min = day_slot_num * min_per_slot
     hour_digit = round_floor(total_min, 60)
     minute_digit = rem(total_min, 60)

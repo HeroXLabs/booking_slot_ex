@@ -5,7 +5,7 @@ defmodule BookingSlot.MixProject do
     [
       app: :booking_slot,
       version: "0.1.0",
-      elixir: "~> 1.10",
+      elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -22,7 +22,7 @@ defmodule BookingSlot.MixProject do
   defp deps do
     [
       {:calendar, "~> 0.17.2"},
-      {:dialyxir, "1.0.0-rc.4", only: [:dev, :test], runtime: false}
+      {:ssl_verify_fun, "~> 1.1.7"}
     ]
   end
 end

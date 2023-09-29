@@ -5,6 +5,7 @@ defmodule BookingSlotTest do
   import Calendar.DateTime, only: [from_erl!: 2, shift_zone!: 2]
 
   test "#to_time_str" do
+    assert BookingSlot.to_time_str(%DaySlot{id: 0}) == "12:00am"
     assert BookingSlot.to_time_str(%DaySlot{id: 36}) == "9:00am"
     assert BookingSlot.to_time_str(%DaySlot{id: 37}) == "9:15am"
     assert BookingSlot.to_time_str(%DaySlot{id: 37}) == "9:15am"
@@ -12,6 +13,7 @@ defmodule BookingSlotTest do
   end
 
   test "#day_slot_from_time" do
+    assert BookingSlot.day_slot_from_time("12:00am") == {:ok, %DaySlot{id: 0}}
     assert BookingSlot.day_slot_from_time("9:00am") == {:ok, %DaySlot{id: 36}}
     assert BookingSlot.day_slot_from_time("9:15am") == {:ok, %DaySlot{id: 37}}
     assert BookingSlot.day_slot_from_time("9:29am") == {:ok, %DaySlot{id: 37}}
@@ -20,11 +22,13 @@ defmodule BookingSlotTest do
 
   test "#day_slot_from_datetime" do
     timezone = "America/Los_Angeles"
+    time_0 = from_erl!({{2019,6,1}, {0,0,0}},  timezone)
     time_1 = from_erl!({{2019,6,1}, {9,0,1}},  timezone)
     time_2 = from_erl!({{2019,6,1}, {9,15,3}}, timezone)
     time_3 = from_erl!({{2019,6,1}, {9,29,4}}, timezone)
     time_4 = from_erl!({{2019,6,1}, {9,30,5}}, timezone)
 
+    assert BookingSlot.day_slot_from_datetime(shift_zone!(time_0, "Etc/UTC"), timezone) == {:ok, %DaySlot{id: 0}}
     assert BookingSlot.day_slot_from_datetime(shift_zone!(time_1, "Etc/UTC"), timezone) == {:ok, %DaySlot{id: 36}}
     assert BookingSlot.day_slot_from_datetime(shift_zone!(time_2, "Etc/UTC"), timezone) == {:ok, %DaySlot{id: 37}}
     assert BookingSlot.day_slot_from_datetime(shift_zone!(time_3, "Etc/UTC"), timezone) == {:ok, %DaySlot{id: 37}}
