@@ -14,6 +14,8 @@ defmodule BookingSlotTest do
 
   test "#day_slot_from_time" do
     assert BookingSlot.day_slot_from_time("12:00am") == {:ok, %DaySlot{id: 0}}
+    assert BookingSlot.day_slot_from_time("11:59pm") == {:ok, %DaySlot{id: 95}}
+    assert BookingSlot.day_slot_from_time("12:00am", true) == {:ok, %DaySlot{id: 96}}
     assert BookingSlot.day_slot_from_time("9:00am") == {:ok, %DaySlot{id: 36}}
     assert BookingSlot.day_slot_from_time("9:15am") == {:ok, %DaySlot{id: 37}}
     assert BookingSlot.day_slot_from_time("9:29am") == {:ok, %DaySlot{id: 37}}

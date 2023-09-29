@@ -26,6 +26,12 @@ defmodule BookingSlot.DaySlot do
 
   def from_end_time(time, min_per_slot \\ 15)
 
+  def from_end_time(%Time{hour: 0, minute: 0}, min_per_slot) do
+    total_min_in_a_day = 24 * 60
+    max_slot_num = to_slot_num(total_min_in_a_day, min_per_slot)
+    {:ok, %__MODULE__{id: max_slot_num}}
+  end
+
   def from_end_time(%Time{} = time, min_per_slot) do
     total_min = get_total_minutes_with_slot_considered(time, min_per_slot)
     slot_num = to_slot_num(total_min, min_per_slot)
