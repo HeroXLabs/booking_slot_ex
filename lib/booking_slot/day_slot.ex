@@ -68,6 +68,7 @@ defmodule BookingSlot.DaySlot do
   end
 
   defp normalize_hour_digit(12), do: 12
+  defp normalize_hour_digit(0), do: 12
   defp normalize_hour_digit(n), do: rem(n, 12)
 
   defp to_slot_num(minutes, min_per_slot) do
