@@ -80,6 +80,7 @@ defmodule BookingSlotTest do
     assert BookingSlot.to_time_str(%DaySlot{id: 37}) == "9:15am"
     assert BookingSlot.to_time_str(%DaySlot{id: 37}) == "9:15am"
     assert BookingSlot.to_time_str(%DaySlot{id: 38}) == "9:30am"
+    assert BookingSlot.to_time_str(%DaySlot{id: 90}) == "10:30pm"
   end
 
   test "#day_slot_from_time" do

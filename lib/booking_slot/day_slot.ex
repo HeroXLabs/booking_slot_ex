@@ -1,7 +1,7 @@
 defmodule BookingSlot.DaySlot do
   alias BookingSlot.Time
 
-  @slot_length_in_min 15
+  @slot_length_in_min Application.compile_env(:booking_slot, :slot_length_in_min)
 
   defstruct id: nil
 

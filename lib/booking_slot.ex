@@ -5,7 +5,16 @@ defmodule BookingSlot do
   alias __MODULE__.{DaySlot, ConsolidatedSlot, Result, Time}
   import Calendar.DateTime, only: [shift_zone!: 2]
 
+  @total_min_in_a_day 24 * 60 
+  @slot_length_in_min Application.compile_env(:booking_slot, :slot_length_in_min)
+
+  def shift_slots(slots, 0) do
+    slots
+  end
+
   def shift_slots(slots, shift_num) do
+    total_slots = total_slots_in_a_day()
+
     shifted_slots =
       slots
       |> Enum.map(fn slot -> %{slot | id: slot.id + shift_num} end)
@@ -17,7 +26,7 @@ defmodule BookingSlot do
     overflowed_positive_shifted_slots =
       positive_shifted_slots
       |> Enum.filter(&(&1.id > 95))
-      |> Enum.map(fn slot -> %{slot | id: slot.id - 96} end)
+      |> Enum.map(fn slot -> %{slot | id: slot.id - total_slots} end)
 
     non_overflowed_positive_shifted_slots =
       positive_shifted_slots
@@ -26,7 +35,7 @@ defmodule BookingSlot do
     negative_shifted_slots =
       shifted_slots
       |> Enum.filter(&(&1.id < 0))
-      |> Enum.map(fn slot -> %{slot | id: slot.id + 96} end)
+      |> Enum.map(fn slot -> %{slot | id: slot.id + total_slots} end)
 
     overflowed_positive_shifted_slots ++ non_overflowed_positive_shifted_slots ++ negative_shifted_slots
   end
@@ -127,6 +136,14 @@ defmodule BookingSlot do
     else
       DaySlot.from_time(time_str)
     end
+  end
+
+  def slot_length_in_min() do
+    @slot_length_in_min
+  end
+
+  def total_slots_in_a_day() do
+    round(@total_min_in_a_day / @slot_length_in_min)
   end
 
   defp do_consolidate_slots(%ConsolidatedSlot{} = consolidated_slot, []) do
