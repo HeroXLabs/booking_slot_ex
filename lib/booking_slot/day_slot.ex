@@ -1,13 +1,15 @@
 defmodule BookingSlot.DaySlot do
   alias BookingSlot.Time
 
+  @slot_length_in_min 15
+
   defstruct id: nil
 
   def new(id) do
     %__MODULE__{id: id}
   end
 
-  def from_time(time, min_per_slot \\ 15)
+  def from_time(time, min_per_slot \\ @slot_length_in_min)
 
   def from_time(%Time{} = time, min_per_slot) do
     slot_num =
@@ -24,7 +26,7 @@ defmodule BookingSlot.DaySlot do
     end
   end
 
-  def from_end_time(time, min_per_slot \\ 15)
+  def from_end_time(time, min_per_slot \\ @slot_length_in_min)
 
   def from_end_time(%Time{hour: 0, minute: 0}, min_per_slot) do
     total_min_in_a_day = 24 * 60
@@ -44,7 +46,7 @@ defmodule BookingSlot.DaySlot do
     end
   end
 
-  def to_time_str(_, min_per_slot \\ 15)
+  def to_time_str(_, min_per_slot \\ @slot_length_in_min)
 
   def to_time_str(%__MODULE__{id: day_slot_num}, min_per_slot) do
     total_min = day_slot_num * min_per_slot

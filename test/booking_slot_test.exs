@@ -4,6 +4,75 @@ defmodule BookingSlotTest do
   alias BookingSlot.{DaySlot,ConsolidatedSlot,Time}
   import Calendar.DateTime, only: [from_erl!: 2, shift_zone!: 2]
 
+  test "#shift_slots" do
+    slots =  [
+      %BookingSlot.DaySlot{id: 0},
+      %BookingSlot.DaySlot{id: 1},
+      %BookingSlot.DaySlot{id: 2},
+      %BookingSlot.DaySlot{id: 3},
+      %BookingSlot.DaySlot{id: 4},
+      %BookingSlot.DaySlot{id: 5},
+      %BookingSlot.DaySlot{id: 6},
+      %BookingSlot.DaySlot{id: 7},
+      %BookingSlot.DaySlot{id: 76},
+      %BookingSlot.DaySlot{id: 77},
+      %BookingSlot.DaySlot{id: 78},
+      %BookingSlot.DaySlot{id: 79},
+      %BookingSlot.DaySlot{id: 80},
+      %BookingSlot.DaySlot{id: 81},
+      %BookingSlot.DaySlot{id: 82},
+      %BookingSlot.DaySlot{id: 83},
+      %BookingSlot.DaySlot{id: 84},
+      %BookingSlot.DaySlot{id: 85},
+      %BookingSlot.DaySlot{id: 86},
+      %BookingSlot.DaySlot{id: 87},
+      %BookingSlot.DaySlot{id: 88},
+      %BookingSlot.DaySlot{id: 89},
+      %BookingSlot.DaySlot{id: 90},
+      %BookingSlot.DaySlot{id: 91},
+      %BookingSlot.DaySlot{id: 92},
+      %BookingSlot.DaySlot{id: 93},
+      %BookingSlot.DaySlot{id: 94},
+      %BookingSlot.DaySlot{id: 95}
+    ]
+
+    shifted_slots = BookingSlot.shift_slots(slots, -50)
+
+    assert shifted_slots == [
+      %BookingSlot.DaySlot{id: 26},
+      %BookingSlot.DaySlot{id: 27},
+      %BookingSlot.DaySlot{id: 28},
+      %BookingSlot.DaySlot{id: 29},
+      %BookingSlot.DaySlot{id: 30},
+      %BookingSlot.DaySlot{id: 31},
+      %BookingSlot.DaySlot{id: 32},
+      %BookingSlot.DaySlot{id: 33},
+      %BookingSlot.DaySlot{id: 34},
+      %BookingSlot.DaySlot{id: 35},
+      %BookingSlot.DaySlot{id: 36},
+      %BookingSlot.DaySlot{id: 37},
+      %BookingSlot.DaySlot{id: 38},
+      %BookingSlot.DaySlot{id: 39},
+      %BookingSlot.DaySlot{id: 40},
+      %BookingSlot.DaySlot{id: 41},
+      %BookingSlot.DaySlot{id: 42},
+      %BookingSlot.DaySlot{id: 43},
+      %BookingSlot.DaySlot{id: 44},
+      %BookingSlot.DaySlot{id: 45},
+      %BookingSlot.DaySlot{id: 46},
+      %BookingSlot.DaySlot{id: 47},
+      %BookingSlot.DaySlot{id: 48},
+      %BookingSlot.DaySlot{id: 49},
+      %BookingSlot.DaySlot{id: 50},
+      %BookingSlot.DaySlot{id: 51},
+      %BookingSlot.DaySlot{id: 52},
+      %BookingSlot.DaySlot{id: 53}
+    ]
+
+    shifted_back_slots = BookingSlot.shift_slots(shifted_slots, 50)
+    assert slots == shifted_back_slots
+  end
+
   test "#to_time_str" do
     assert BookingSlot.to_time_str(%DaySlot{id: 0}) == "12:00am"
     assert BookingSlot.to_time_str(%DaySlot{id: 1}) == "12:15am"
@@ -17,6 +86,7 @@ defmodule BookingSlotTest do
     assert BookingSlot.day_slot_from_time("12:00am") == {:ok, %DaySlot{id: 0}}
     assert BookingSlot.day_slot_from_time("11:59pm") == {:ok, %DaySlot{id: 95}}
     assert BookingSlot.day_slot_from_time("12:00am", true) == {:ok, %DaySlot{id: 96}}
+    assert BookingSlot.day_slot_from_time("2:00pm") == {:ok, %DaySlot{id: 56}}
     assert BookingSlot.day_slot_from_time("9:00am") == {:ok, %DaySlot{id: 36}}
     assert BookingSlot.day_slot_from_time("9:15am") == {:ok, %DaySlot{id: 37}}
     assert BookingSlot.day_slot_from_time("9:29am") == {:ok, %DaySlot{id: 37}}

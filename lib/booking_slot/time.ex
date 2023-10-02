@@ -6,7 +6,7 @@ defmodule BookingSlot.Time do
   end
 
   def new(time_str) do
-    parse_time(time_str)
+    parse_time_str(time_str)
   end
 
   defp build(12, min, "am") do
@@ -25,8 +25,8 @@ defmodule BookingSlot.Time do
     %__MODULE__{hour: hr + 12, minute: min}
   end
 
-  defp parse_time(time) do
-    case Regex.run(~r/(1[0-2]|0?[1-9]):([0-5][0-9]) ?([AaPp][Mm])/, time) do
+  defp parse_time_str(time_str) when is_binary(time_str) do
+    case Regex.run(~r/(1[0-2]|0?[1-9]):([0-5][0-9]) ?([AaPp][Mm])/, time_str) do
       [_, hr_str, min_str, suffix] ->
         time = build(String.to_integer(hr_str), String.to_integer(min_str), suffix)
         {:ok, time}

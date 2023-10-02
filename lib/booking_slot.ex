@@ -2,8 +2,34 @@ defmodule BookingSlot do
   @moduledoc """
   Documentation for BookingSlot.
   """
-  alias __MODULE__.{DaySlot,ConsolidatedSlot,Result,Time}
+  alias __MODULE__.{DaySlot, ConsolidatedSlot, Result, Time}
   import Calendar.DateTime, only: [shift_zone!: 2]
+
+  def shift_slots(slots, shift_num) do
+    shifted_slots =
+      slots
+      |> Enum.map(fn slot -> %{slot | id: slot.id + shift_num} end)
+
+    positive_shifted_slots =
+      shifted_slots
+      |> Enum.filter(&(&1.id >= 0))
+
+    overflowed_positive_shifted_slots =
+      positive_shifted_slots
+      |> Enum.filter(&(&1.id > 95))
+      |> Enum.map(fn slot -> %{slot | id: slot.id - 96} end)
+
+    non_overflowed_positive_shifted_slots =
+      positive_shifted_slots
+      |> Enum.filter(&(&1.id <= 95))
+
+    negative_shifted_slots =
+      shifted_slots
+      |> Enum.filter(&(&1.id < 0))
+      |> Enum.map(fn slot -> %{slot | id: slot.id + 96} end)
+
+    overflowed_positive_shifted_slots ++ non_overflowed_positive_shifted_slots ++ negative_shifted_slots
+  end
 
   def day_slot_from_datetime(datetime_utc, timezone) do
     time =
@@ -21,13 +47,14 @@ defmodule BookingSlot do
   end
 
   def union(day_slots_1, day_slots_2) do
-    day_slots_1 ++ day_slots_2
-    |> Enum.uniq_by(&(&1.id))
+    (day_slots_1 ++ day_slots_2)
+    |> Enum.uniq_by(& &1.id)
     |> Enum.sort(&(&1.id < &2.id))
   end
 
   def intersect(day_slots_1, day_slots_2) do
     day_slots_1_ids = day_slots_1 |> Enum.map(& &1.id)
+
     day_slots_2
     |> Enum.filter(&Enum.member?(day_slots_1_ids, &1.id))
     |> Enum.sort(&(&1.id < &2.id))
@@ -35,21 +62,22 @@ defmodule BookingSlot do
 
   def subtract(day_slots_1, day_slots_2) do
     day_slots_2_ids = day_slots_2 |> Enum.map(& &1.id)
+
     day_slots_1
-    |> Enum.filter(&(not(Enum.member? day_slots_2_ids, &1.id)))
+    |> Enum.filter(&(not Enum.member?(day_slots_2_ids, &1.id)))
     |> Enum.sort(&(&1.id < &2.id))
   end
 
   def matched_slots(day_slots, length) do
     day_slots
     |> consolidate_slots()
-    |> Enum.filter(& &1.length >= length)
-    |> Enum.map(& remove_tail_slots(&1, length))
+    |> Enum.filter(&(&1.length >= length))
+    |> Enum.map(&remove_tail_slots(&1, length))
     |> unconsolidate_slots()
   end
 
   defp remove_tail_slots(%ConsolidatedSlot{length: slot_length} = consolidated_slot, length) do
-    %{ consolidated_slot | length: (slot_length - (length - 1)) }
+    %{consolidated_slot | length: slot_length - (length - 1)}
   end
 
   def consolidate_slots(slots) do
@@ -74,16 +102,16 @@ defmodule BookingSlot do
   end
 
   def unconsolidate_slot(%ConsolidatedSlot{id: starting_id, length: length}) do
-    0..length - 1
-    |> Enum.map(& DaySlot.new(starting_id + &1))
+    0..(length - 1)
+    |> Enum.map(&DaySlot.new(starting_id + &1))
   end
 
   def day_slots_from_times({start_time_str, end_time_str}) do
     with {:ok, %DaySlot{id: start_day_slot_num}} <- day_slot_from_time(start_time_str),
          {:ok, %DaySlot{id: end_day_slot_num}} <- day_slot_from_time(end_time_str, true) do
       {:ok,
-        start_day_slot_num .. end_day_slot_num-1
-        |> Enum.map(& DaySlot.new(&1)) }
+       start_day_slot_num..(end_day_slot_num - 1)
+       |> Enum.map(&DaySlot.new(&1))}
     end
   end
 
@@ -105,9 +133,12 @@ defmodule BookingSlot do
     {consolidated_slot, []}
   end
 
-  defp do_consolidate_slots(%ConsolidatedSlot{id: starting_id, length: length} = consolidated_slot, [slot | rest] = prev_rest) do
+  defp do_consolidate_slots(
+         %ConsolidatedSlot{id: starting_id, length: length} = consolidated_slot,
+         [slot | rest] = prev_rest
+       ) do
     if slot.id == starting_id + length do
-      %{ consolidated_slot | length: length + 1 }
+      %{consolidated_slot | length: length + 1}
       |> do_consolidate_slots(rest)
     else
       {consolidated_slot, prev_rest}
